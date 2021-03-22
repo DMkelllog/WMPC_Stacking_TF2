@@ -2,8 +2,9 @@
 
 Wafer map defect pattern classification using Stacking ensemble
 
-Proposed by H.Kang and S.Kang 
-(A stacking ensemble classifier with handcrafted and convolutional features for wafer map pattern classification)
+Proposed by H.Kang and S.Kang
+
+* Hyungu Kang, Seokho Kang* (2021+), "A stacking ensemble classifier with handcrafted and convolutional features for wafer map pattern classification", Computers in Industry, accepted for publication.
 
 ## Methodology
 

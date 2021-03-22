@@ -3,7 +3,8 @@
 # - CC65
 
 # Assembled binaries and object directories
-obj/
+data/
+result/
 a.out
 *.bin
 *.a26

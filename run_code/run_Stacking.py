@@ -37,48 +37,44 @@ y_onehot = tf.keras.utils.to_categorical(y)
 
 REP_ID = 0
 RAN_NUM = 27407 + REP_ID
-
+print('Replication:', REP_ID)
 for TRAIN_SIZE_ID in range(4):
     TRAIN_SIZE = TRAIN_SIZE_LIST[TRAIN_SIZE_ID]
-    X_trnval, X_tst, y_trnval, y_tst =  train_test_split(X_resize_stacked, y_onehot, 
-                                                         test_size=10000, random_state=RAN_NUM)
 
-    # Randomly sample train set for evaluation at various training set size
-    if TRAIN_SIZE == X_trnval.shape[0]:
-        pass
-    else:
-        X_trnval,_ , y_trnval, _ = train_test_split(X_trnval, y_trnval, 
-                                                    train_size=TRAIN_SIZE, random_state=RAN_NUM)
+    y_trnval, y_tst =  train_test_split(y_onehot, test_size=10000, random_state=RAN_NUM)
+    if TRAIN_SIZE == 162946:
+            pass
+    else:    
+        y_trnval, _ = train_test_split(y_trnval, train_size=TRAIN_SIZE, random_state=RAN_NUM)
 
-    # Get unique labels in training set. Some labels might not appear in small training set.
+    filename_MFE = '../data/WMPC_'+'MFE_'+str(TRAIN_SIZE)+'_'+str(REP_ID)+'_'
+    filename_CNN = '../data/WMPC_'+'CNN_'+str(TRAIN_SIZE)+'_'+str(REP_ID)+'_'
+
+    with open(filename_MFE + 'softmax.pickle', 'rb') as f:
+        y_trnval_hat_mfe, y_tst_hat_mfe = pickle.load(f)
+    with open(filename_CNN + 'softmax.pickle', 'rb') as f:
+        y_trnval_hat_cnn, y_tst_hat_cnn = pickle.load(f)
+    X_trnval_concat = np.concatenate([y_trnval_hat_mfe, y_trnval_hat_cnn], axis=1)
+    X_tst_concat = np.concatenate([y_tst_hat_mfe, y_tst_hat_cnn], axis=1)
+
     labels = np.unique(np.argmax(y_trnval, 1))
 
-    base_model = VGG16(weights=None, pooling='avg', include_top=False)
-    predictions = tf.keras.layers.Dense(9, activation='softmax')(base_model.output)
-    model = tf.keras.Model(inputs=base_model.input, outputs=predictions)
-    for layer in base_model.layers: layer.trainable = True
-    model.compile(optimizer= tf.keras.optimizers.Adam(lr=LEARNING_RATE), 
-                  loss='categorical_crossentropy', 
-                  metrics=['accuracy'])
-
-    log = model.fit(X_trnval, y_trnval, validation_split=0.2, 
-                    batch_size=BATCH_SIZE, epochs=MAX_EPOCH, 
+    
+    model = FNN()
+    log = model.fit(X_trnval_concat, y_trnval, validation_split=0.2, 
+                    epochs=MAX_EPOCH, batch_size=BATCH_SIZE,
                     callbacks=[early_stopping], verbose=0)
-    y_trnval_hat= model.predict(X_trnval)
-    y_tst_hat= model.predict(X_tst)
 
+    y_trnval_hat = model.predict(X_trnval_concat)  
+    y_tst_hat = model.predict(X_tst_concat)
     macro = f1_score(np.argmax(y_tst, 1), np.argmax(y_tst_hat, 1), labels=labels, average='macro')
     micro = f1_score(np.argmax(y_tst, 1), np.argmax(y_tst_hat, 1), labels=labels, average='micro')
     cm = confusion_matrix(np.argmax(y_tst, 1), np.argmax(y_tst_hat, 1))
 
-    filename = '../result/CNN/WMPC_'+'CNN_'+'_'+str(TRAIN_SIZE)+'_'+str(REP_ID)+'_'
-
-    with open(filename+'softmax.pickle', 'wb') as f:
-        pickle.dump([y_trnval_hat, y_tst_hat], f)
+    filename = '../result/WMPC_'+'Stacking_'+str(TRAIN_SIZE)+'_'+str(REP_ID)+'_'
     with open(filename+'f1_score.pickle', 'wb') as f:
         pickle.dump([macro, micro, cm], f)
-
-    print('train size:', TRAIN_SIZE,
-          'rep_id:', REP_ID,
-          'macro:', np.round(macro, 4), 
-          'micro:', np.round(micro, 4))
+    with open(filename+'softmax.pickle', 'wb') as f:
+        pickle.dump([y_trnval_hat,y_trnval], f)
+    with open(filename+'coef_.pickle', 'wb') as f:
+        pickle.dump(model.coef_, f)

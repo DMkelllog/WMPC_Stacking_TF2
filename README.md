@@ -42,7 +42,7 @@ Stacking Ensemble![](https://github.com/DMkelllog/WMPC_Stacking/blob/main/Stacki
 ## References
 
 * WM-811K(LSWMD). National Taiwan University Department of Computer Science Multimedia Information Retrieval LAB http://mirlab.org/dataSet/public/
-* Hyungu Kang, Seokho Kang* (2021+), "A stacking ensemble classifier with handcrafted and convolutional features for wafer map pattern classification", Computers in Industry, accepted for publication.
+* Kang, H., & Kang, S. (2021). A stacking ensemble classifier with handcrafted and convolutional features for wafer map pattern classification. Computers in Industry, 129, 103450.
 * Nakazawa, T., & Kulkarni, D. V. (2018). Wafer map defect pattern classification and image retrieval using convolutional neural network. IEEE Transactions on Semiconductor Manufacturing, 31(2), 309-314.
 * Shim, J., Kang, S., & Cho, S. (2020). Active learning of convolutional neural network for cost-effective wafer map pattern classification. IEEE Transactions on Semiconductor Manufacturing, 33(2), 258-266.
 * Kang, S. (2020). Rotation-Invariant Wafer Map Pattern Classification With Convolutional Neural Networks. IEEE Access, 8, 170650-170658.

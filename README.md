@@ -35,7 +35,7 @@ Stacking Ensemble![](https://github.com/DMkelllog/WMPC_Stacking/blob/main/Stacki
 
 * Python
 * Pandas
-* Tensorflow
+* Tensorflow 2.1
 * Scikit-learn
 * Scikit-image
 
